@@ -40,11 +40,32 @@ head(astros_home)
 head(astros_away)
 ```
 
-# Preliminary Graphs
+# Preliminary Graphs - Home vs. Away
 
+### comparing specific variables
 ```{r}
 astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(y=OPS, fill=split))
+    geom_boxplot(aes(x=OPS, fill=split))
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=R, fill=split))
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=H, fill=split))
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=BA, fill=split))
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=HR, fill=split))
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=RBI, fill=split))
 ```
