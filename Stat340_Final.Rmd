@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ***
@@ -60,11 +60,11 @@ kable(variables)
 ## Loading Data
 
 ```{r loading data}
-astros_home <- read.csv("./data/astros_2017_player_splits_home.csv") %>%
+astros_home <- read.csv("./data/astros/astros_2017_player_splits_home.csv") %>%
   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
   mutate(split = "HOME")
 
-astros_away <- read.csv("./data/astros_2017_player_splits_away.csv")%>%
+astros_away <- read.csv("./data/astros/astros_2017_player_splits_away.csv")%>%
   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
   mutate(split = "AWAY")
 
@@ -84,31 +84,43 @@ ops <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=OPS, fill=split)) + 
-    theme(legend.position = "none")
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 runs <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=R, fill=split)) + 
-    theme(legend.position = "none")
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 hits <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=H, fill=split)) + 
-    theme(legend.position = "none")
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 batting_avg <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=BA, fill=split)) + 
-    theme(legend.position = "none")
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 home_run <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=HR, fill=split)) + 
-    theme(legend.position = "none")
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 rbi <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=RBI, fill=split))
+    geom_boxplot(aes(x=RBI, fill=split)) + 
+    theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
 
 boxplot_grid <- plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
 title <- ggdraw() + draw_label("Astros 2017 data - Home vs Away", fontface='bold')
