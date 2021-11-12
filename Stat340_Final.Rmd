@@ -8,9 +8,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-```{r libraries, include=FALSE}
+```{r, include=FALSE}
 library(dplyr)
 library(tidyverse)
+library(ggplot2)
+# install.packages("cowplot")
+library(cowplot)
 ```
 
 
@@ -44,28 +47,36 @@ head(astros_away)
 
 ### comparing specific variables
 ```{r}
-astros_2017 %>%
+ops <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=OPS, fill=split))
-astros_2017 %>%
+    geom_boxplot(aes(x=OPS, fill=split)) + 
+    theme(legend.position = "none")
+runs <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=R, fill=split))
-astros_2017 %>%
+    geom_boxplot(aes(x=R, fill=split)) + 
+    theme(legend.position = "none")
+hits <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=H, fill=split))
-astros_2017 %>%
+    geom_boxplot(aes(x=H, fill=split)) + 
+    theme(legend.position = "none")
+batting_avg <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=BA, fill=split))
-astros_2017 %>%
+    geom_boxplot(aes(x=BA, fill=split)) + 
+    theme(legend.position = "none")
+home_run <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
-    geom_boxplot(aes(x=HR, fill=split))
-astros_2017 %>%
+    geom_boxplot(aes(x=HR, fill=split)) + 
+    theme(legend.position = "none")
+rbi <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=RBI, fill=split))
+
+plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
+?plot_grid
 ```
