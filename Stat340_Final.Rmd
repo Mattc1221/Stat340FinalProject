@@ -1,0 +1,50 @@
+---
+title: "Stat340_Final"
+author: "Matthew Chiang, Ishaan Backliwal, Jordan Livingston, Eric Dietze, Vu Pham"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r libraries, include=FALSE}
+library(dplyr)
+library(tidyverse)
+```
+
+
+# Loading Data
+
+```{r loading data, include=FALSE}
+astros_home <- read.csv("./data/astros_2017_player_splits_home.csv") %>%
+  mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
+  mutate(split = "HOME")
+
+astros_away <- read.csv("./data/astros_2017_player_splits_away.csv")%>%
+  mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
+  mutate(split = "AWAY")
+
+astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length(astros_home[,1]),])
+```
+
+### Astros 2017 Home Data
+
+```{r, echo=FALSE}
+head(astros_home)
+```
+
+### Astros 2017 Away Data
+
+```{r, echo=FALSE}
+head(astros_away)
+```
+
+# Preliminary Graphs
+
+```{r}
+astros_2017 %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(y=OPS, fill=split))
+```
