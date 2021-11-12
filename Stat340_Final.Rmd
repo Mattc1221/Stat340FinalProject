@@ -28,7 +28,8 @@ astros_away <- read.csv("./data/astros_2017_player_splits_away.csv")%>%
   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
   mutate(split = "AWAY")
 
-astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length(astros_away[,1]),])
+astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length(astros_away[,1]),]) %>% 
+  drop_na()
 ```
 
 ### Astros 2017 Home Data
@@ -79,11 +80,46 @@ rbi <- astros_2017 %>%
 
 plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
 ```
-```{r}
+```{r mc_runs, echo=FALSE}
+runs_simulation <- function(n1, n2, avg){
+  home_runs <- mean(rpois(n1, avg))
+  away_runs <- mean(rpois(n2, avg))
+  return(away_runs - home_runs)
+}
+
+runs_mc <- function(n1, n2, avg, reps = 1000){
+  mean_differences <- rep(NA, reps)
+  for(i in 1:reps){
+     difference <- runs_simulation(n1, n2, avg)
+     mean_differences[i] <- difference
+  }
+  return(mean_differences)
+}
+
 run_data <- astros_2017 %>%
   drop_na() %>%
-  select(R)
-run_data
+  select(R, split)
+player_run_avg <- mean(run_data$R)
+num_home <- count(filter(run_data, split=="HOME"))$n
+num_away <- count(filter(run_data, split=="AWAY"))$n
+
+runs_sim <- runs_mc(num_home, num_away, player_run_avg)
+home_away_runs_difference <- mean(filter(run_data, split=="HOME")$R)-mean(filter(run_data, split=="AWAY")$R)
+runs_ci <- quantile(as.vector(runs_sim), prob=c(0.025, 0.975))
+
+data.frame(diff = runs_sim)%>%
+  ggplot() +
+  geom_histogram(aes(x=diff), bins = 30) +
+  geom_vline(aes(xintercept = home_away_runs_difference, color="Observed Difference"),lwd= 1) +
+  geom_vline(aes(xintercept = c(runs_ci[1]), color="Confidence Interval"),lwd= 1) +
+  geom_vline(aes(xintercept = c(runs_ci[2]),color="Confidence Interval"),lwd= 1) +
+  scale_color_manual(
+    name = "Legend", 
+    values = c("Confidence Interval" = "#34c4cc", "Observed Difference" = "#ec8274")) +
+  xlab("Difference of Averages") +
+  ylab("Frequency") +
+  ggtitle("Difference of Average Player Runs", subtitle = "Home vs. Away - Astros 2017")
+
 ```
 
 
