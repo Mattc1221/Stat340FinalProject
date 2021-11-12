@@ -193,6 +193,12 @@ However, because Away game Runs are higher than Home game Runs, this implies tha
 
 ## Next Steps
 
-One of our goals for the remainder of the semester is to use prediction models to answer the statistical question on how the supposed cheating affected individuals play separate from the team. We also planned to answer the statistical question, "how might the season have looked if they didn't cheat", but after finding that cheating had a negative effect on the performance, we may have to alter this statistical question a bit. We also still want to look into the Astros vs. every other team in the league during 2017
+One of our goals for the remainder of the semester is to use prediction models to answer the statistical question on how the supposed cheating affected individuals play separate from the team. We also planned to answer the statistical question, "how might the season have looked if they didn't cheat", but after finding that cheating had a negative effect on the performance, we may have to alter this statistical question a bit. 
+
+We also still want to look into the Astros vs. every other team in the league during 2017. Looking at other teams' home and away game difference will help us see if this phenomena is league-wide and help contextualize out findings with the Astros. 
+
+We also might want to look into the performance of teams throughout the leauge at the Astros' home stadium to see if the conditions under which teams play at that location have any affect on performance, indicating a possible reason for the Astros lower performance at home.  
+
+
 
 -regression?
