@@ -46,8 +46,9 @@ head(astros_away)
 
 # Preliminary Graphs - Home vs. Away
 
-### comparing specific variables
-```{r}
+### multiple variables
+to start we will look at some of the variables we take a look some comparisons of specific variables between home and away games.
+```{r, echo=FALSE}
 ops <- astros_2017 %>%
   drop_na() %>%
   ggplot() +
@@ -80,6 +81,19 @@ rbi <- astros_2017 %>%
 
 plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
 ```
+
+***
+
+These box plots show that there is not much difference between the home and away games. However there are some patterns that we can explore: large differences between variables, and the variance of the distributions.
+
+The largest difference in means that we can see is the the average Runs (R) per season that a player gets between home and away.
+
+***
+
+### Runs analysis - Home vs. Away
+
+To do this analysis, we will be doing a monte carlo simulation on the difference of average runs a player gets per season between home and away games. Runs will be modeled by a poisson random variable. Under the assumption that Runs from home and away games comes from the same distribution, we will set lambda as the mean of runs for home and away games combined. 
+
 ```{r mc_runs, echo=FALSE}
 runs_simulation <- function(n1, n2, avg){
   home_runs <- mean(rpois(n1, avg))
@@ -106,7 +120,7 @@ num_away <- count(filter(run_data, split=="AWAY"))$n
 
 runs_sim <- runs_mc(num_home, num_away, player_run_avg)
 home_away_runs_difference <- mean(filter(run_data, split=="HOME")$R)-mean(filter(run_data, split=="AWAY")$R)
-runs_ci <- quantile(as.vector(runs_sim), prob=c(0.025, 0.957))
+runs_ci <- quantile(as.vector(runs_sim), prob=c(0.05, 0.95))
 
 data.frame(diff = runs_sim)%>%
   ggplot() +
@@ -123,5 +137,11 @@ data.frame(diff = runs_sim)%>%
 
 ```
 
+***
 
+After performing a 90% confidence interval on our data, we see that our observed difference falls outside of the confidence interval, leading us to reject our initial assumption. Thus, we can say with 90% confidence that there is statistical significance in the difference of Run means between home and away games. 
+
+However, because Away game Runs are higher than Home game Runs, this implies that the Atros cheating had a negative effect on their performance.
+
+***
 
