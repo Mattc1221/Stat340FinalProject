@@ -199,6 +199,3 @@ We also still want to look into the Astros vs. every other team in the league du
 
 We also might want to look into the performance of teams throughout the leauge at the Astros' home stadium to see if the conditions under which teams play at that location have any affect on performance, indicating a possible reason for the Astros lower performance at home.  
 
-
-
--regression?
