@@ -23,6 +23,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 ```{r, include=FALSE}
 library(dplyr)
 library(tidyverse)
@@ -118,7 +119,7 @@ plot_grid(title, boxplot_grid, ncol=1, rel_heights=c(0.1, 1))
 
 These box plots show that there is not much difference between the home and away games. However there are some patterns that we can explore: large differences between variables, and the variance of the distributions.
 
-The largest difference in means that we can see is the the average Runs (R) per season that a player gets between home and away.
+The largest difference in means that we can see is the average Runs (R) per season that a player gets between home and away.
 
 ***
 
@@ -179,9 +180,19 @@ However, because Away game Runs are higher than Home game Runs, this implies tha
 
 ## Discussion on Progress/Challenges
 
-SHOULD PUT SOMETHING HERE
+
+**Challenges**:
+
++ We have found that the data we found for the 2017 Astros was not as detailed as we had hoped. The available dataset from the database that specifies home vs. away games is in form of each players total statistics, not game by game data. If we had game by game home and away data, it would be easier for us to do differnt statistical tests on specific variables and possibly gain more insight during our preliminary analysis. 
++ Plot 1: *Astros 2017 data - Home vs. Away* - we did a very simple statistical analysis for this plot, and the results seem to suggest that there is no real difference between the home and away statistics, pointing us to believe that the cheating during the 2017 season had no real effect.
++ Plot 2: *Difference of Average Player Runs* - when we performed a 95% confidence interval on this monte carlo simulation, the observed difference landed just inside of the confidence interval, which gave us inconclusive results. However, when we ran a 90% confidence interval instead, the observed difference fell outside of the confidence interval, telling us that there was statistical significance. This result supports the opposite of our inital thoery. Thus our problem lies with which percent confidence interval to choose.
+
+**Progress**:
+
++ So far we have been able to identify that of our variables, Runs, seems to be the only one with statistical significance, and that the cheating could actually have had an adverse affect on the Astros, making them perform worse than if they hadn't cheated.
 
 ## Next Steps
 
-SHOULD PUT SOMETHING HERE
+One of our goals for the remainder of the semester is to use prediction models to answer the statistical question on how the supposed cheating affected individuals play separate from the team. We also planned to answer the statistical question, "how might the season have looked if they didn't cheat", but after finding that cheating had a negative effect on the performance, we may have to alter this statistical question a bit. We also still want to look into the Astros vs. every other team in the league during 2017
 
+-regression?
