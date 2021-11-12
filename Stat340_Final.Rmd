@@ -97,15 +97,16 @@ runs_mc <- function(n1, n2, avg, reps = 1000){
 }
 
 run_data <- astros_2017 %>%
-  drop_na() %>%
-  select(R, split)
+  select(R, split) %>%
+  drop_na()
+
 player_run_avg <- mean(run_data$R)
 num_home <- count(filter(run_data, split=="HOME"))$n
 num_away <- count(filter(run_data, split=="AWAY"))$n
 
 runs_sim <- runs_mc(num_home, num_away, player_run_avg)
 home_away_runs_difference <- mean(filter(run_data, split=="HOME")$R)-mean(filter(run_data, split=="AWAY")$R)
-runs_ci <- quantile(as.vector(runs_sim), prob=c(0.025, 0.975))
+runs_ci <- quantile(as.vector(runs_sim), prob=c(0.025, 0.957))
 
 data.frame(diff = runs_sim)%>%
   ggplot() +
