@@ -1,0 +1,9 @@
+Name,Abbr.,Description
+On base and slugging percentage,OPS,Measures a players On base Percentage (percentage of At bats a player has gotten on base) and a players slugging percentage (a weighted batting average)
+On base and slugging percentage (Player),tOPS+,"This is adjusted so that 100 is the team average, so if tOPS is less than 100, the batters did worse, and if it is higher than 100, the batters did better."
+On base and slugging percentage (Team and Player),sOPS+,"This is adjusted so that 100 is the league average, so if sOPS is less than 100, the batters did worse than the league average and if it is higher than 100, the batters did better."
+Runs Batted In,RBI,The number of runs a player has created by hitting a player home. Weights a players higher
+Hits,H,When a batter reaches base without doing so via error or fielder’s choice.
+Homeruns,HR,Scored when the ball is hit in such a way that the batter is able to circle the bases and reach home safely.
+Walks,W,"Occurs when a pitcher throws four pitches outside of the strike zone, none of which are swung at by the batter."
+Batting Average,BA,Percentage of At Bats a player gets a hit.

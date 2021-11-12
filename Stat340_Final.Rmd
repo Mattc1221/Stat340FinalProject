@@ -1,9 +1,24 @@
 ---
-title: "Stat340_Final"
-author: "Matthew Chiang, Ishaan Backliwal, Jordan Livingston, Eric Dietze, Vu Pham"
+title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
+
+***
+
+**Matthew Chiang**:     907 723 8120 (Mchiang7)
+
+**Ishaan Backliwal**:   908 134 7719 (backliwal)
+
+**Jordan Livingston**:  908 132 1151 (jlivingston4)
+
+**Eric Dietze**:        907 935 8843 (edietze)
+
+**Vu Pham**:            907 808 5595 (vmpham2)
+
+***
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -14,12 +29,36 @@ library(tidyverse)
 library(ggplot2)
 # install.packages("cowplot")
 library(cowplot)
+library(knitr)
 ```
 
+## Description of Data
+We will use data sets from baseball-reference.com which contain team and individual statistics. This database also offers data ‘splits’, which show comparisons between home and away games. For our primary analysis, we will be focusing on the Houston Astros 2017 Team Batting Splits and the 2017 Individual Player Batting Splits. These data sets outline various different statistics of the Houston Astros 2017 season in which it was confirmed that they had cheated in home games. We will use the ‘splits’ data sets to determine a difference of statistics between home and away games. This database also contains data on the Astros for different seasons and different teams. Depending on the results of our initial analysis, we will compare the players on the roster of the 2017 Astros to previous seasons to determine a difference in performance before and after cheating.
 
-# Loading Data
+*Data for different teams and seasons are also present in the database if needed for further analysis.*
 
-```{r loading data, include=FALSE}
+### *Statistical Questions*
++ Is there a noticeable difference between the batting splits for home and away games of the Houston Astros team during the 2017 season?
++ How does this difference, if any, compare to other teams’ performance in the MLB during the 2017 season?
++ Is there sufficient statistical evidence to suggest the Houston Astros benefited from cheating in the 2017 season? 
+  + If there is, how much may the cheating have affected their season? And what would their season have looked like if they didn’t cheat?
+  
+## Why We Chose This Dataset
++ This has been a controversy within the baseball community regarded to be one of the biggest cheating scandals in the sport's history.
++ In 2017 the Houston Astros won the world series. However, it came out in November of 2019 that they were using technology to steal signs during home games.
++ To us, this data set is interesting because it contains (in detail) records of each game, each player, and almost all variables that could take place in this event. So, this dataset is very in depth and useful for testing hypotheses thoroughly regarding the incident. Like they said “Numbers don’t lie”!
+
+## Variables
+
+Below is a list of some important variables in our dataset:
+```{r echo=FALSE}
+variables <- read.csv("./data/variable_descriptions.csv")
+kable(variables)
+```
+
+## Loading Data
+
+```{r loading data}
 astros_home <- read.csv("./data/astros_2017_player_splits_home.csv") %>%
   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
   mutate(split = "HOME")
@@ -32,22 +71,13 @@ astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length
   drop_na()
 ```
 
-### Astros 2017 Home Data
 
-```{r, echo=FALSE}
-head(astros_home)
-```
+## Preliminary Plots
 
-### Astros 2017 Away Data
+### *Comparing The Astros 2017 Home and Away Data*
 
-```{r, echo=FALSE}
-head(astros_away)
-```
-
-# Preliminary Graphs - Home vs. Away
-
-### multiple variables
 to start we will look at some of the variables we take a look some comparisons of specific variables between home and away games.
+
 ```{r, echo=FALSE}
 ops <- astros_2017 %>%
   drop_na() %>%
@@ -79,7 +109,9 @@ rbi <- astros_2017 %>%
   ggplot() +
     geom_boxplot(aes(x=RBI, fill=split))
 
-plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
+boxplot_grid <- plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
+title <- ggdraw() + draw_label("Astros 2017 data - Home vs Away", fontface='bold')
+plot_grid(title, boxplot_grid, ncol=1, rel_heights=c(0.1, 1))
 ```
 
 ***
@@ -90,7 +122,7 @@ The largest difference in means that we can see is the the average Runs (R) per 
 
 ***
 
-### Runs analysis - Home vs. Away
+### *Runs analysis - Home vs. Away*
 
 To do this analysis, we will be doing a monte carlo simulation on the difference of average runs a player gets per season between home and away games. Runs will be modeled by a poisson random variable. Under the assumption that Runs from home and away games comes from the same distribution, we will set lambda as the mean of runs for home and away games combined. 
 
@@ -144,4 +176,12 @@ After performing a 90% confidence interval on our data, we see that our observed
 However, because Away game Runs are higher than Home game Runs, this implies that the Atros cheating had a negative effect on their performance.
 
 ***
+
+## Discussion on Progress/Challenges
+
+SHOULD PUT SOMETHING HERE
+
+## Next Steps
+
+SHOULD PUT SOMETHING HERE
 
