@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ***
