@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ***
@@ -31,6 +31,7 @@ library(ggplot2)
 # install.packages("cowplot")
 library(cowplot)
 library(knitr)
+library(stringr)
 ```
 
 ## Description of Data
@@ -59,17 +60,61 @@ kable(variables)
 
 ## Loading Data
 
+```{r}
+# will store the data for all teams in the 2017 season
+season_2017 <- NA
+data_empty <- TRUE
+
+# Getting initial path data
+data_path <- "./data"
+data_dirs <- list.files(data_path)
+data_dirs <- data_dirs[!str_detect(data_dirs, ".csv")]
+
+# iteratively get all csv file paths and store them
+for(path in data_dirs){
+  # gets the directory for a spefic teams csv files
+  team_dir <- paste(data_path, path, sep="/")
+  csv_list <- list.files(team_dir)
+  
+  # steps through csv files, loads and edits them as dataframes
+  for(csv in csv_list){
+    # get full path, and other information from csv name
+    full_path <- paste(team_dir, csv, sep="/")
+    split <- ifelse(str_detect(csv, "home"), "HOME", "AWAY")
+    team_name <- str_split_fixed(csv, pattern="_", 2)[1]
+    
+    # Read in data
+    df <- read.csv(full_path)%>%
+      mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
+      mutate(split = split, team = team_name)
+    df <- df[ -length(df[,1]), ]
+    
+    # binds all teams data together
+    if(data_empty){
+      season_2017 <- df
+      data_empty <- FALSE
+    }else {
+      season_2017 <- rbind(season_2017, df, make.row.names=TRUE)
+    }
+  }
+}
+astros_2017 <- season_2017 %>%
+  filter(team=="astros")
+```
+
 ```{r loading data}
-astros_home <- read.csv("./data/astros/astros_2017_player_splits_home.csv") %>%
-  mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
-  mutate(split = "HOME")
-
-astros_away <- read.csv("./data/astros/astros_2017_player_splits_away.csv")%>%
-  mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
-  mutate(split = "AWAY")
-
-astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length(astros_away[,1]),]) %>% 
-  drop_na()
+# astros_home <- read.csv("./data/astros/astros_2017_player_splits_home.csv") %>%
+#   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
+#   mutate(split = "HOME")
+# 
+# astros_away <- read.csv("./data/astros/astros_2017_player_splits_away.csv")%>%
+#   mutate(Name = str_split_fixed(Name, "\\\\", 2)[,1]) %>%
+#   mutate(split = "AWAY")
+# 
+# astros_2017 <- rbind(astros_home[-length(astros_home[,1]),], astros_away[-length(astros_away[,1]),])
+# astros_2017
+# astros_home
+# astros_home[-length(astros_home[,1]),]
 ```
 
 
@@ -81,6 +126,7 @@ to start we will look at some of the variables we take a look some comparisons o
 
 ```{r, echo=FALSE}
 ops <- astros_2017 %>%
+  select(OPS, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=OPS, fill=split)) + 
@@ -88,6 +134,7 @@ ops <- astros_2017 %>%
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 runs <- astros_2017 %>%
+  select(R, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=R, fill=split)) + 
@@ -95,6 +142,7 @@ runs <- astros_2017 %>%
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 hits <- astros_2017 %>%
+  select(H, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=H, fill=split)) + 
@@ -102,6 +150,7 @@ hits <- astros_2017 %>%
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 batting_avg <- astros_2017 %>%
+  select(BA, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=BA, fill=split)) + 
@@ -109,6 +158,7 @@ batting_avg <- astros_2017 %>%
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 home_run <- astros_2017 %>%
+  select(HR, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=HR, fill=split)) + 
@@ -116,6 +166,7 @@ home_run <- astros_2017 %>%
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 rbi <- astros_2017 %>%
+  select(RBI, split) %>%
   drop_na() %>%
   ggplot() +
     geom_boxplot(aes(x=RBI, fill=split)) + 
@@ -164,8 +215,8 @@ num_home <- count(filter(run_data, split=="HOME"))$n
 num_away <- count(filter(run_data, split=="AWAY"))$n
 
 runs_sim <- runs_mc(num_home, num_away, player_run_avg)
-home_away_runs_difference <- mean(filter(run_data, split=="HOME")$R)-mean(filter(run_data, split=="AWAY")$R)
-runs_ci <- quantile(as.vector(runs_sim), prob=c(0.05, 0.95))
+home_away_runs_difference <- mean(filter(run_data, split=="AWAY")$R)-mean(filter(run_data, split=="HOME")$R)
+runs_ci <- quantile(as.vector(runs_sim), prob=c(0.025, 0.975))
 
 data.frame(diff = runs_sim)%>%
   ggplot() +
@@ -179,12 +230,11 @@ data.frame(diff = runs_sim)%>%
   xlab("Difference of Averages") +
   ylab("Frequency") +
   ggtitle("Difference of Average Player Runs", subtitle = "Home vs. Away - Astros 2017")
-
 ```
 
 ***
 
-After performing a 90% confidence interval on our data, we see that our observed difference falls outside of the confidence interval, leading us to reject our initial assumption. Thus, we can say with 90% confidence that there is statistical significance in the difference of Run means between home and away games. 
+After performing a 95% confidence interval on our data, we see that our observed difference falls outside of the confidence interval, leading us to reject our initial assumption. Thus, we can say with 95% confidence that there is statistical significance in the difference of Run means between home and away games. 
 
 However, because Away game Runs are higher than Home game Runs, this implies that the Atros cheating had a negative effect on their performance.
 
@@ -197,7 +247,7 @@ However, because Away game Runs are higher than Home game Runs, this implies tha
 
 + We have found that the data we found for the 2017 Astros was not as detailed as we had hoped. The available dataset from the database that specifies home vs. away games is in form of each players total statistics, not game by game data. If we had game by game home and away data, it would be easier for us to do differnt statistical tests on specific variables and possibly gain more insight during our preliminary analysis. 
 + Plot 1: *Astros 2017 data - Home vs. Away* - we did a very simple statistical analysis for this plot, and the results seem to suggest that there is no real difference between the home and away statistics, pointing us to believe that the cheating during the 2017 season had no real effect.
-+ Plot 2: *Difference of Average Player Runs* - when we performed a 95% confidence interval on this monte carlo simulation, the observed difference landed just inside of the confidence interval, which gave us inconclusive results. However, when we ran a 90% confidence interval instead, the observed difference fell outside of the confidence interval, telling us that there was statistical significance. This result supports the opposite of our inital thoery. Thus our problem lies with which percent confidence interval to choose.
++ Plot 2: *Difference of Average Player Runs* - We were not sure which random variable we should use to model the average number of runs a player gets in a season for our monte carlo simulation. We ultimately decided on a poisson random variable due to its discrete nature.
 
 **Progress**:
 
