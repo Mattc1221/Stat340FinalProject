@@ -99,7 +99,7 @@ for(path in data_dirs){
   }
 }
 astros_2017 <- season_2017 %>%
-  filter(team=="astros")
+  filter(team=="astros", AB != 0)
 ```
 
 ```{r loading data}
