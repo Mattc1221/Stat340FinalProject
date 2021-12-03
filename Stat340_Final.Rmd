@@ -35,9 +35,10 @@ library(stringr)
 ```
 
 ## Description of Data
-We will use data sets from baseball-reference.com which contain team and individual statistics. This database also offers data ‘splits’, which show comparisons between home and away games. For our primary analysis, we will be focusing on the Houston Astros 2017 Team Batting Splits and the 2017 Individual Player Batting Splits. These data sets outline various different statistics of the Houston Astros 2017 season in which it was confirmed that they had cheated in home games. We will use the ‘splits’ data sets to determine a difference of statistics between home and away games. This database also contains data on the Astros for different seasons and different teams. Depending on the results of our initial analysis, we will compare the players on the roster of the 2017 Astros to previous seasons to determine a difference in performance before and after cheating.
 
-*Data for different teams and seasons are also present in the database if needed for further analysis.*
+Baseball is an American sport played between two teams. One team plays defense and has a player (pitcher) try to throw the ball past the other team's batter who tries to hit the ball. If the batting team successfully hits the ball enough times they can score runs (points). We will use data sets from baseball-reference.com which contain team and individual statistics. This database also offers data ‘splits’, which show comparisons between home and away games. For our primary analysis, we will be focusing on the Houston Astros 2017 Team Batting Splits and the 2017 Individual Player Batting Splits. These data sets outline various different statistics of the Houston Astros 2017 season in which it was confirmed that they had cheated in home games. We will use the ‘splits’ data sets to determine a difference of statistics between home and away games. This database also contains data on the Astros for different seasons and different teams. Depending on the results of our initial analysis, we will compare the players on the roster of the 2017 Astros to previous seasons to determine a difference in performance before and after cheating. Our statistical question is whether or not the 2017 Houston Astros cheated. Two years after the alleged cheating occured, reports from a player who was on the 2017 Astros alleged that there were cameras positioned in the Astros home field stadium, Minute Maid Park in Houston, that could see the relayed signs between the pitcher and catcher. Note: the catcher communicates to the pitcher what pitch the pitcher should throw based on a series of hand movements in between pitches. The Houston Astros camera could see these hand signals and people were in charge of watching the film and decoding the symbols to determine what pitch was coming. Once a pitch was shown, members of the Astros would relay what pitch was coming to the batter through their own series of symbols (most infamously a banging of a garbage can). 
+
+The Astros only had this technology at their Home Stadium, so they should have higher performance at home compared to on the road. Note: this sign decoding should reason that only their batting improved at home and not their pitching. We used several stats for measuring their performance. 
 
 ### *Statistical Questions*
 + Is there a noticeable difference between the batting splits for home and away games of the Houston Astros team during the 2017 season?
@@ -108,7 +109,6 @@ astros_2017 <- season_2017 %>%
 wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
   mutate(split = gsub(" ", "", split, fixed = TRUE), team = gsub(" ", "", team, fixed = TRUE)) %>%
   mutate(split = toupper(split))
-wins_and_losses_2017
 ```
 
 ## Preliminary Plots
@@ -173,7 +173,7 @@ plot_grid(title, boxplot_grid, ncol=1, rel_heights=c(0.1, 1))
 
 ***
 
-These box plots show that there seems to be a big difference between the home and away games. 
+These box plots show how there is a clear difference between home and away games. The largest difference is in average Hits (H) per season that a player gets between home and away games. 
 
 ***
 
@@ -227,48 +227,75 @@ data.frame(diff = runs_sim)%>%
 
 After performing a 95% confidence interval on our data, we see that our observed difference falls outside of the confidence interval, leading us to reject our initial assumption. Thus, we can say with 95% confidence that there is statistical significance in the difference of Run means between home and away games. 
 
-However, because Away game Runs are higher than Home game Runs, this implies that the Atros cheating had a negative effect on their performance.
+However, because Away game Runs are lower than Home game Runs, this implies that the Atros cheating had a positive effect on their performance.
 
 ***
 
 ###  *Attempting Regression*
 
-```{r}
+Next we will attempt to perform a regression to predict the percentage of games that a team will win based on their summed statistics in Runs, Hits, Home Runs, and Runs Batted In. To do this we will have to combine a few datasets: the data we have for specific players from baseball-reference.com and data for team statitcs (games won, lost and played by home and away).
 
-
-
-
+```{r, echo=FALSE}
 lm_data_2017_sub <- season_2017 %>%
   select(R, H, HR, RBI, team, split) %>%
   group_by(split, team) %>%
   mutate(R = sum(R), H = sum(H), HR = sum(HR), RBI = sum(RBI)) %>%
   unique()
+
 test<- wins_and_losses_2017 %>%
   filter(split != "TOTAL")
-lm_data_2017 <- merge(lm_data_2017, test) %>%
+
+lm_data_2017 <- merge(lm_data_2017_sub, test) %>%
   mutate(win_percent = W/G)
 
-lm()
+lm_data_2017_home <- lm_data_2017 %>%
+  filter(split == "HOME") %>%
+  filter(team != "astros")
+
+lm_data_2017_away <- lm_data_2017 %>%
+  filter(split == "AWAY") %>%
+  filter(team != "astros")
+
+lm.2017.home <- lm(win_percent ~ R + H + HR + RBI, data=lm_data_2017_home)
+lm.2017.away <- lm(win_percent ~ R + H + HR + RBI, data=lm_data_2017_away)
 ```
+```{r}
+summary(lm.2017.home)
+summary(lm.2017.away)
+```
+
+From our results we can see that our regressions are very bad. None of the p values are below .05 for both home and away games. However it is interesting to note that the R-squared value is much higher for Away than for Home games. In the future we will reeally need to improve upon this model.
 
 ## Discussion on Progress/Challenges
 
 
 **Challenges**:
 
-+ We have found that the data we found for the 2017 Astros was not as detailed as we had hoped. The available dataset from the database that specifies home vs. away games is in form of each players total statistics, not game by game data. If we had game by game home and away data, it would be easier for us to do differnt statistical tests on specific variables and possibly gain more insight during our preliminary analysis. 
-+ Plot 1: *Astros 2017 data - Home vs. Away* - we did a very simple statistical analysis for this plot, and the results seem to suggest that there is no real difference between the home and away statistics, pointing us to believe that the cheating during the 2017 season had no real effect.
-+ Plot 2: *Difference of Average Player Runs* - We were not sure which random variable we should use to model the average number of runs a player gets in a season for our monte carlo simulation. We ultimately decided on a poisson random variable due to its discrete nature.
++ On our last project report, the results that we gathered from the data were not what we expected. We originally cleaned the dataset wrong and it affected the outcome, giving us reason to believe the Astros didn't cheat. After going back and changing how we read in the data, our graphs prove what we were originally expecting, and show initial evidence that they were cheating. Our original findings were very surprising because this cheating scandal wouldn't have been a scandal if it weren't for some correlation and evidence that suggest they did. This was a big challenge because after our last project report, we thought we were gonna have to go back and change our whole project. But now we are back on track and can continue the analysis of our questions.
+
++ Another challenge we faced during this project report was trying to figure out how to use a linear model in our analysis. We originally wanted to use a regression model on all of the variables in our dataset to predict wins and then we could see if home games (the supposed cheating) was a statistically significant variable. After initially trying this, we realized this approach was not a very good/strong indication of how home games helped them cheat. Then, we thought it would be beneficial to compare individual Astro players pre-season stats, to that of the regular season, and compare home and away. This also came with its issues though because there wasn't individual player data for preseason. So we moved onto our next thought process
+
++ From the data site Kieth gave us from the last project report, we found a perfect data set split up into the home and away games, but there were no column names for 161 variables. So we used python to assign column names from the reference sheet online. 
+
++ In doing this, we found out how hard it is to try and piece together all the datasets. This method also increases the margin of error, which is something we can compute and analyze for the final report. 
+
 
 **Progress**:
 
-+ So far we have been able to identify that of our variables, Runs, seems to be the only one with statistical significance, and that the cheating could actually have had an adverse affect on the Astros, making them perform worse than if they hadn't cheated.
++ We came to the realization that some of our data cleaning from our last project report was skewing the results. We fixed that problem, re-fit the previous graphs, and re-analyzed them
+
++ We spend a tremendous amount of time reading in new data and cleaning it, in order to form a regression model. After forming models, 
+
+
+
 
 ## Next Steps
 
-One of our goals for the remainder of the semester is to use prediction models to answer the statistical question on how the supposed cheating affected individuals play separate from the team. We also planned to answer the statistical question, "how might the season have looked if they didn't cheat", but after finding that cheating had a negative effect on the performance, we may have to alter this statistical question a bit. 
++ We want to figure out why the new regression models we created were so bad. Before our the final project is due, we will work on how to improve our model, and attend office hours to gain some insight as why they currently are the way they are. We can then plot the models to vusually see how they are doing 
 
-We also still want to look into the Astros vs. every other team in the league during 2017. Looking at other teams' home and away game difference will help us see if this phenomena is league-wide and help contextualize out findings with the Astros. 
 
-We also might want to look into the performance of teams throughout the leauge at the Astros' home stadium to see if the conditions under which teams play at that location have any affect on performance, indicating a possible reason for the Astros lower performance at home.  
++ We also might want to look into the performance of teams throughout the league at the Astros' home stadium to see if the conditions under which teams play at that location (called park factors) have any affect on performance, indicating a possible reason for the Astros lower performance at home.
+
+
+
 
