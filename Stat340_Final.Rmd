@@ -81,7 +81,7 @@ for(path in data_dirs){
     # get full path, and other information from csv name
     full_path <- paste(team_dir, csv, sep="/")
     split <- ifelse(str_detect(csv, "home"), "HOME", "AWAY")
-    team_name <- str_split_fixed(csv, pattern="_", 2)[1]
+    team_name <- str_split_fixed(team_dir, pattern="data/", 2)[2]
     
     # Read in data
     df <- read.csv(full_path)%>%
@@ -105,7 +105,9 @@ astros_2017 <- season_2017 %>%
 ```{r}
 # Loading Data pt 2
 # btw this sucked
-wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv")
+wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
+  mutate(split = gsub(" ", "", split, fixed = TRUE), team = gsub(" ", "", team, fixed = TRUE)) %>%
+  mutate(split = toupper(split))
 wins_and_losses_2017
 ```
 
@@ -232,17 +234,21 @@ However, because Away game Runs are higher than Home game Runs, this implies tha
 ###  *Attempting Regression*
 
 ```{r}
-(season_2017)
 
-home_2017 <- season_2017 %>%
-  filter(split == "HOME") %>%
-  select(OPS, R, H, BA, HR, RBI) %>%
-  drop_na()
 
-away_2017 <- season_2017 %>%
-  filter(split == "AWAY") %>%
-  select(OPS, R, H, BA, HR, RBI) %>%
-  drop_na()
+
+
+lm_data_2017_sub <- season_2017 %>%
+  select(R, H, HR, RBI, team, split) %>%
+  group_by(split, team) %>%
+  mutate(R = sum(R), H = sum(H), HR = sum(HR), RBI = sum(RBI)) %>%
+  unique()
+test<- wins_and_losses_2017 %>%
+  filter(split != "TOTAL")
+lm_data_2017 <- merge(lm_data_2017, test) %>%
+  mutate(win_percent = W/G)
+
+lm()
 ```
 
 ## Discussion on Progress/Challenges
