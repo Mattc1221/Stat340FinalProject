@@ -233,7 +233,7 @@ However, because Away game Runs are lower than Home game Runs, this implies that
 
 ###  *Attempting Regression*
 
-Next we will attempt to perform a regression to predict the percentage of games that a team will win based on their summed statistics in Runs, Hits, Home Runs, and Runs Batted In. To do this we will have to combine a few datasets: the data we have for specific players from baseball-reference.com and data for team statitcs (games won, lost and played by home and away).
+Next we will attempt to perform a regression to predict the percentage of games that a team will win based on their summed statistics in Runs, Hits, Home Runs, Runs Batted In, and split. To do this we will have to combine a few datasets: the data we have for specific players from baseball-reference.com and data for team statitcs (games won, lost and played by home and away).
 
 ```{r, echo=FALSE}
 lm_data_2017_sub <- season_2017 %>%
@@ -248,23 +248,14 @@ test<- wins_and_losses_2017 %>%
 lm_data_2017 <- merge(lm_data_2017_sub, test) %>%
   mutate(win_percent = W/G)
 
-lm_data_2017_home <- lm_data_2017 %>%
-  filter(split == "HOME") %>%
-  filter(team != "astros")
-
-lm_data_2017_away <- lm_data_2017 %>%
-  filter(split == "AWAY") %>%
-  filter(team != "astros")
-
-lm.2017.home <- lm(win_percent ~ R + H + HR + RBI, data=lm_data_2017_home)
-lm.2017.away <- lm(win_percent ~ R + H + HR + RBI, data=lm_data_2017_away)
+lm.2017 <- lm(win_percent ~ R + H + HR + RBI + split, data=lm_data_2017)
 ```
 ```{r}
-summary(lm.2017.home)
-summary(lm.2017.away)
+summary(lm.2017)
+
 ```
 
-From our results we can see that our regressions are very bad. None of the p values are below .05 for both home and away games. However it is interesting to note that the R-squared value is much higher for Away than for Home games. In the future we will reeally need to improve upon this model.
+From our results we can see that our regressions are very bad. None of the p values are below .05 for both home and away games. In the future we will really need to improve upon this model.
 
 ## Discussion on Progress/Challenges
 
@@ -284,7 +275,7 @@ From our results we can see that our regressions are very bad. None of the p val
 
 + We came to the realization that some of our data cleaning from our last project report was skewing the results. We fixed that problem, re-fit the previous graphs, and re-analyzed them
 
-+ We spend a tremendous amount of time reading in new data and cleaning it, in order to form a regression model. After forming models, 
++ We spend a tremendous amount of time reading in new data and cleaning it, in order to form a regression model. After forming a linear model to predict win_percentage based on Runs, Hits, Runs Batted In, Home Runs, and Split (Home vs, Away), we found that the model sucks, like a lot. So we will need to adapt our model to work better in the future, but we did not have enough time to finish it now.
 
 
 
