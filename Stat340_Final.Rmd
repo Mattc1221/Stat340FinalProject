@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ***
@@ -282,10 +282,12 @@ From our results we can see that our regressions are very bad. None of the p val
 
 ## Next Steps
 
-+ We want to figure out why the new regression models we created were so bad. Before our the final project is due, we will work on how to improve our model, and attend office hours to gain some insight as why they currently are the way they are. We can then plot the models to vusually see how they are doing 
++ We want to figure out why the new regression models we created were so bad. Before the final project is due, we will work on how to improve our model, and attend office hours to gain some insight as why they currently are the way they are. We can then plot the models to visually see how they are doing 
 
 
 + We also might want to look into the performance of teams throughout the league at the Astros' home stadium to see if the conditions under which teams play at that location (called park factors) have any affect on performance, indicating a possible reason for the Astros lower performance at home.
+
++ We are also considering looking into things such as individual Astros players performance and test to see if there were any noticeable, improbable differences between years, comparing it to the change in performance for other teams' top performers. 
 
 
 
