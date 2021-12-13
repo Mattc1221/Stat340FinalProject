@@ -104,6 +104,76 @@ astros_2017 <- season_2017 %>%
 ```
 
 ```{r}
+team_visualize <- function(team_df, label_name){
+  ops <- team_df %>%
+  select(OPS, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=OPS, fill=split)) + 
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+runs <- team_df %>%
+  select(R, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=R, fill=split)) + 
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+hits <- team_df %>%
+  select(H, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=H, fill=split)) + 
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+batting_avg <- team_df %>%
+  select(BA, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=BA, fill=split)) + 
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+home_run <- team_df %>%
+  select(HR, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=HR, fill=split)) + 
+    theme(legend.position = "none", 
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+rbi <- team_df %>%
+  select(RBI, split) %>%
+  drop_na() %>%
+  ggplot() +
+    geom_boxplot(aes(x=RBI, fill=split)) + 
+    theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+
+label_name <- paste(label_name, "data - Home vs Away") 
+
+boxplot_grid <- plot_grid(ops, runs, hits, batting_avg, home_run, rbi, ncol=2)
+title <- ggdraw() + draw_label(label_name, fontface='bold')
+return(plot_grid(title, boxplot_grid, ncol=1, rel_heights=c(0.1, 1)))
+}
+
+
+team_visualize(not_astros, "All Teams Not Named 'Astros'")
+
+
+not_astros <- season_2017 %>%
+  filter(team!="astros", AB != 0)
+
+team_visualize(astros_2017, "Astros")
+
+```
+
+
+
+```{r}
 # Loading Data pt 2
 # btw this sucked
 wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
