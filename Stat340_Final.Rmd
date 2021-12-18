@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ***
@@ -434,17 +434,50 @@ IZP_diffs %>%
   geom_col(aes(x=order, y =change_IZP, fill = team))
   
 ```
+
 ```{r}
 zones <- read.csv('./data/zone_swings.csv')
 zones_clean <- zones %>%
   unite('Name', first_name:last_name, remove = TRUE) %>%
+  mutate(Name = str_replace(Name, " ", "")) %>%
   mutate(Name = str_replace(Name, "_", " ")) %>%
-  select(Name, out_zone_swing, in_zone_swing) %>%
+  select(Name, out_zone_swing, in_zone_swing, year) %>%
   arrange(Name)
 
 astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
 # astros_zones_2017
 # zones_clean
+z_2016 <- zones_clean %>%
+  filter(year == "2016")
+
+z_2017 <- zones_clean %>%
+  filter(year == "2017")
+```
+
+```{r}
+# Zone data for Astros 2017
+astros_z_2017 <- left_join(z_2017, astros_2017, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
+
+# Zone data for Astros 2016
+astros_z_2016 <- left_join(z_2016, astros_2017, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
+
+# Zone data for Non-Astros teams 2017
+not_astros_z_2017 <- left_join(z_2017, not_astros, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
+
+# Zone data for Non-Astros teams 2016
+not_astros_z_2016 <- left_join(z_2016, not_astros, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
 ```
 
 ## Discussion on Progress/Challenges
