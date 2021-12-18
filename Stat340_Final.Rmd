@@ -443,38 +443,21 @@ zones_clean <- zones %>%
   mutate(Name = str_replace(Name, "_", " ")) %>%
   select(Name, out_zone_swing, in_zone_swing, year) %>%
   arrange(Name)
-
-z_2016 <- zones_clean %>%
-  filter(year == "2016")
-
-z_2017 <- zones_clean %>%
-  filter(year == "2017")
 ```
 
 ```{r}
-# Zone data for Astros 2017
-astros_z_2017 <- left_join(z_2017, astros_2017, by = "Name") %>%
+astros_z <- left_join(zones_clean, astros_2017, by = "Name") %>%
   select(Name, out_zone_swing, in_zone_swing, year, team) %>%
   drop_na() %>%
   unique()
 
-# Zone data for Astros 2016
-astros_z_2016 <- left_join(z_2016, astros_2017, by = "Name") %>%
+not_astros_z <- left_join(zones_clean, not_astros, by = "Name") %>%
   select(Name, out_zone_swing, in_zone_swing, year, team) %>%
   drop_na() %>%
   unique()
 
-# Zone data for Non-Astros teams 2017
-not_astros_z_2017 <- left_join(z_2017, not_astros, by = "Name") %>%
-  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
-  drop_na() %>%
-  unique()
-
-# Zone data for Non-Astros teams 2016
-not_astros_z_2016 <- left_join(z_2016, not_astros, by = "Name") %>%
-  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
-  drop_na() %>%
-  unique()
+zone_data <- rbind(astros_z, not_astros_z)
+zone_data
 ```
 
 ## Discussion on Progress/Challenges
