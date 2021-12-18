@@ -103,7 +103,7 @@ astros_2017 <- season_2017 %>%
   filter(team=="astros", AB != 0)
 ```
 
-```{r}
+```{r include=FALSE}
 team_visualize <- function(team_df, label_name){
   ops <- team_df %>%
   select(OPS, split) %>%
@@ -161,14 +161,8 @@ return(plot_grid(title, boxplot_grid, ncol=1, rel_heights=c(0.1, 1)))
 }
 
 
-team_visualize(not_astros, "All Teams Not Named 'Astros'")
-
-
 not_astros <- season_2017 %>%
   filter(team!="astros", AB != 0)
-
-team_visualize(astros_2017, "Astros")
-
 ```
 
 
@@ -301,31 +295,117 @@ However, because Away game Runs are lower than Home game Runs, this implies that
 
 ***
 
-###  *Attempting Regression*
+### *Is it just a home-field advantage*
 
-Next we will attempt to perform a regression to predict the percentage of games that a team will win based on their summed statistics in Runs, Hits, Home Runs, Runs Batted In, and split. To do this we will have to combine a few datasets: the data we have for specific players from baseball-reference.com and data for team statitcs (games won, lost and played by home and away).
+Since our original statistical question is basically "can we prove that the Astros cheated in the 2017 season?" we want to determine if the results we found in the confidence interval above just prove that a home field advantage exists or if the Astros have a better home field advantage due to the existence of cheating.
 
-```{r, echo=FALSE}
-lm_data_2017_sub <- season_2017 %>%
-  select(R, H, HR, RBI, team, split) %>%
-  group_by(split, team) %>%
-  mutate(R = sum(R), H = sum(H), HR = sum(HR), RBI = sum(RBI)) %>%
-  unique()
+To do this we will perform some two sample t tests to determine a difference between the average statistics between Astros at home and other teams at their home stadium. To start, let us first test a few more variables specifically for Astros home vs. away.
 
-test<- wins_and_losses_2017 %>%
-  filter(split != "TOTAL")
+```{r echo=FALSE}
+a = astros_2017 %>%
+  filter(split == "HOME")
+b = astros_2017 %>%
+  filter(split == "AWAY")
 
-lm_data_2017 <- merge(lm_data_2017_sub, test) %>%
-  mutate(win_percent = W/G)
-
-lm.2017 <- lm(win_percent ~ R + H + HR + RBI + split, data=lm_data_2017)
 ```
+```{r echo=FALSE}
+# 2 sample t,tests on 3 major stats in mlb of astros home vs astros away
+t.test(a$BA,b$BA) 
+t.test(a$HR,b$HR)
+t.test(a$RBI,b$RBI)
+```
+
+Above we see that the Astros perform much better at home than away in the three variables we chose: Batting Average, Home Runs, and Runs Batted In. This again does not show conclusive evidence that they cheated, but instead adds strength to our earlier analysis that the Astros definitely have a home field advantage. Next we will compare the Astros with the rest of the league, by performing another two sample t test between the astros home games and the home games of all other teams in the league.
+
+```{r echo=FALSE}
+#head(not_astros)
+c = not_astros %>%
+  filter(split == "HOME")
+#better than other teams when they are at home at significant stats
+t.test(a$BA,c$BA) 
+t.test(a$HR,c$HR)
+t.test(a$RBI,c$RBI)
+
+#HR is significantly better
+```
+```{r echo=FALSE}
+d = not_astros %>%
+  filter(split == "AWAY")
+t.test(b$BA,d$BA) 
+t.test(b$HR,d$HR)
+t.test(b$RBI,d$RBI)
+#still perform better but not as strong as the home stats
+```
+
+```{r echo=FALSE}
+t.test(a$sOPS.,b$sOPS.)
+#t.test(a$tOPS.,b$tOPS.)
+t.test(a$sOPS.,c$sOPS.)
+
+#significant better when astros is at home than when astros is away and other teams are at home (should look more at p val maybe ?)
+```
+
 ```{r}
-summary(lm.2017)
-
+# Loading Data pt 2
+# btw this sucked
+wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
+  mutate(split = gsub(" ", "", split, fixed = TRUE), team = gsub(" ", "", team, fixed = TRUE)) %>%
+  mutate(split = toupper(split))
 ```
 
-From our results we can see that our regressions are very bad. None of the p values are below .05 for both home and away games. In the future we will really need to improve upon this model.
+
+```{r include = FALSE}
+## Disregard this, but I think Jordan wanted me to keep it in here
+
+pool <- season_2017 %>%
+  select(team, split, BA, AB) %>%
+  drop_na(BA) %>%
+  filter(BA != 0) %>%
+  filter(AB >= 200) %>%
+  select(-AB) %>%
+  group_by(team,split) %>%
+  # filter(BA >= sort(BA, decreasing=TRUE)[20]) %>%
+  mutate(avg_ba = mean(BA)) %>%
+  select(-BA) %>%
+  unique() %>%
+  group_by(team) %>%
+  mutate(diff_ba = max(avg_ba)-min(avg_ba)) #%>%
+  # select(-split, -avg_ba) %>%
+  # unique()
+
+?drop_na
+
+not_astros_ba <- pool %>%
+  filter(team != "astros")
+  
+arrange(pool, diff_ba)
+not_astros_ba
+
+hist(not_astros_ba$diff_ba)
+
+as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
+# pool <- pool$avg_runs
+# odd <- seq(1, length(pool), 2)
+# even <- seq(2, length(pool), 2)
+# pool <- pool[even] #- pool[odd]
+# reps <- 1000
+# 
+# samples <- rep(NA, reps)
+# 
+# for(i in 1:reps){
+#   samples[i] <- sample(pool, size = 1, replace = TRUE)
+# }
+# 
+# as.vector(quantile(samples, prob = c(0.025, .975)))
+# 
+# df <- data.frame(diffs = pool)
+# 
+# ggplot(df, aes(x=diffs)) +
+#   geom_histogram()
+
+# df <- data.frame(home = pool[even], away = pool[odd])
+```
+
 
 ## Discussion on Progress/Challenges
 
