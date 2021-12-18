@@ -173,15 +173,6 @@ zones_clean <- zones %>%
   mutate(Name = str_replace(Name, "_", " ")) %>%
   select(Name, out_zone_swing, in_zone_swing, year) %>%
   arrange(Name)
-
-astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
-# astros_zones_2017
-# zones_clean
-z_2016 <- zones_clean %>%
-  filter(year == "2016")
-
-z_2017 <- zones_clean %>%
-  filter(year == "2017")
 ```
 
 ```{r}
@@ -196,6 +187,28 @@ not_astros_z <- left_join(zones_clean, not_astros, by = "Name") %>%
   unique()
 
 zone_data <- rbind(astros_z, not_astros_z)
+```
+
+```{r}
+all_zones <- read.csv('./data/all_zones.csv')
+all_zones_clean <- all_zones %>%
+  unite('Name', first_name:last_name, remove = TRUE) %>%
+  mutate(Name = str_replace(Name, " ", "")) %>%
+  mutate(Name = str_replace(Name, "_", " ")) %>%
+  select(-player_id)
+
+astros_all_z <- left_join(all_zones_clean, astros_2017, by = "Name") %>%
+  select(colnames(all_zones_clean), team) %>%
+  drop_na() %>%
+  unique()
+
+not_astros_all_z <- left_join(all_zones_clean, not_astros, by = "Name") %>%
+  select(colnames(all_zones_clean), team) %>%
+  drop_na() %>%
+  unique()
+
+all_zone_data <- rbind(astros_all_z, not_astros_all_z)
+all_zones_clean
 ```
 
 ## Preliminary Plots
