@@ -402,8 +402,23 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 
 ### *A New Approach*
 
+```{r}
+zones <- read.csv('./data/zone_swings.csv')
+zones_clean <- zones %>%
+  unite('Name', first_name:last_name, remove = TRUE) %>%
+  mutate(Name = str_replace(Name, "_", " ")) %>%
+  select(Name, out_zone_swing, in_zone_swing) %>%
+  arrange(Name)
 
+astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
+astros_zones_2017
+zones_clean
+```
 
+```{r}
+astros_2017 %>%
+  arrange(Name)
+```
 ## Discussion on Progress/Challenges
 
 
