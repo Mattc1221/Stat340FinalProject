@@ -197,18 +197,24 @@ all_zones_clean <- all_zones %>%
   mutate(Name = str_replace(Name, "_", " ")) %>%
   select(-player_id)
 
-astros_all_z <- left_join(all_zones_clean, astros_2017, by = "Name") %>%
-  select(colnames(all_zones_clean), team) %>%
+astros_names <- astros_2017 %>%
+  select(Name, team)
+
+not_astros_names <- not_astros %>%
+  select(Name, team)
+
+astros_all_z <- left_join(all_zones_clean, astros_names, by = "Name") %>%
+  select(Name, year, z_swing_percent, z_swing_miss_percent, oz_swing_percent, oz_swing_miss_percent, oz_contact_percent, out_zone_swing_miss , out_zone_swing, out_zone_percent, out_zone, iz_contact_percent, in_zone_swing_miss, in_zone_swing, in_zone_percent, in_zone, team) %>%
   drop_na() %>%
   unique()
 
-not_astros_all_z <- left_join(all_zones_clean, not_astros, by = "Name") %>%
-  select(colnames(all_zones_clean), team) %>%
+not_astros_all_z <- full_join(all_zones_clean, not_astros_names, by = "Name") %>%
+  select(Name, year, z_swing_percent, z_swing_miss_percent, oz_swing_percent, oz_swing_miss_percent, oz_contact_percent, out_zone_swing_miss , out_zone_swing, out_zone_percent, out_zone, iz_contact_percent, in_zone_swing_miss, in_zone_swing, in_zone_percent, in_zone, team) %>%
   drop_na() %>%
   unique()
 
 all_zone_data <- rbind(astros_all_z, not_astros_all_z)
-all_zones_clean
+all_zone_data
 ```
 
 ## Preliminary Plots
