@@ -295,11 +295,11 @@ However, because Away game Runs are lower than Home game Runs, this implies that
 
 ***
 
-### *Is it just a home-field advantage*
+### *Is It Just a Home-Field Advantage*
 
 Since our original statistical question is basically "can we prove that the Astros cheated in the 2017 season?" we want to determine if the results we found in the confidence interval above just prove that a home field advantage exists or if the Astros have a better home field advantage due to the existence of cheating.
 
-To do this we will perform some two sample t tests to determine a difference between the average statistics between Astros at home and other teams at their home stadium. We have realized that sign stealing should have a higher effect on players batting averages because it allowed the astros players to have an know which kind of pitch was comming in and thus have a better chance at hitting the ball. Batting Average is calculated as $BA = Hits / At Bats$.
+To do this we will perform some two sample t tests to determine a difference between the average statistics between Astros at home and other teams at their home stadium. We have realized that sign stealing should have a higher effect on players batting averages because it allowed the astros players to know which kind of pitch was coming in and thus have a better chance at hitting the ball. Batting Average is calculated as $BA = Hits / At Bats$.
 
 ```{r echo=FALSE}
 astros_home = astros_2017 %>%
@@ -329,7 +329,7 @@ t.test(astros_home$BA,c$BA)
 #HR is significantly better
 ```
 
-Here the results do not lead us anywhere conclusive as our p-value is too high to reject the hypothesis that the true mean of the distribution of the Astros batting average is the same as the true mean of the batting average of all other teams.
+Here the results do not lead us anywhere conclusive as our p-value is too high to reject the hypothesis that the true mean of the distribution of the Astros batting average is the same as the true mean of the batting average of all other teams. We have also tried this in other variables in our data set as well, however the results have all been similar. There is no distinction between the astros home statistics versus other teams home statistics.
 
 ```{r echo=FALSE, include=FALSE}
 d = not_astros %>%
@@ -346,8 +346,6 @@ t.test(astros_home$sOPS.,astros_away$sOPS.)
 
 #significant better when astros is at home than when astros is away and other teams are at home (should look more at p val maybe ?)
 ```
-
-
 
 
 ```{r include = FALSE}
@@ -401,6 +399,9 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 
 # df <- data.frame(home = pool[even], away = pool[odd])
 ```
+
+### *A New Approach*
+
 
 
 ## Discussion on Progress/Challenges
