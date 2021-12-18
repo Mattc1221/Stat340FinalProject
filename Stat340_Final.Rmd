@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ***
@@ -355,7 +355,7 @@ pool <- season_2017 %>%
   select(team, split, BA, AB) %>%
   drop_na(BA) %>%
   filter(BA != 0) %>%
-  filter(AB >= 200) %>%
+  filter(AB >= 130) %>%
   select(-AB) %>%
   group_by(team,split) %>%
   # filter(BA >= sort(BA, decreasing=TRUE)[20]) %>%
@@ -402,6 +402,39 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 
 ### *A New Approach*
 
+So far it seems that our data is too general for our statistical question. There are a myriad of different factors that play into how a team does in a season, differing game to game. We believe that to tackle this question we need to take a loot at more in-depth statistics than just player hits, batting average, etc. We have found a new dataset from "Baseball Savant" that offer's player data for the percent of pitches that are out of the strike zone that a player swings at and the percent of pitches that are in the strike zone that a player swings at.
+
+
+```{r}
+test = data.frame(
+  player= c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"),
+  IZP = c(.1, .2, .3, .4, .5, .6, .7, .8, .9, .8, .14, .35, .66, 
+          .2, .25, .35, .45, .55, .65, .75, .85, .95, .85, .145, .355, .56),
+  OZP = c(.15, .25, .35, .45, .55, .65, .76, .86, .96, .86, .146, .356, .65, 
+          .2, .28, .38, .48, .58, .68, .75, .85, .95, .85, .145, .355, .56),
+  year = c("2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017",
+           "2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016"),
+  team = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+           "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M")
+)
+
+
+IZP_diffs <- test %>%
+  drop_na() %>%
+  group_by(player) %>%
+  mutate(change_IZP = (IZP[2] -IZP[1]), change_OZP = (OZP[2] -OZP[1])) %>%
+  select(player, team, change_IZP, change_OZP) %>%
+  unique() %>%
+  arrange(desc(change_IZP)) %>%
+  mutate(team=ifelse(team=="A", "astros", "not_astros"))
+IZP_diffs$order <- 1:length(IZP_diffs$change_IZP)
+IZP_diffs
+IZP_diffs %>%
+  ggplot() +
+  geom_col(aes(x=order, y =change_IZP, fill = team))
+  
+```
 
 
 ## Discussion on Progress/Challenges
@@ -424,7 +457,7 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 
 + We spend a tremendous amount of time reading in new data and cleaning it, in order to form a regression model. After forming a linear model to predict win_percentage based on Runs, Hits, Runs Batted In, Home Runs, and Split (Home vs, Away), we found that the model sucks, like a lot. So we will need to adapt our model to work better in the future, but we did not have enough time to finish it now.
 
-
++ In experimenting with different ways to analyze home and away splits, we found that creating our own batting average would be best because we could create one for each home and away game according to the player. In doing this we also realized that teams rosters are different for home and away and this, along with players who never got up the the plate once in a whole season were skewing our results. In an attempt to resolve this, we only analyzed players who got up to bat once per game, or 162 times for all the regular season games in the pre-covid 2017 season.
 
 
 ## Next Steps
