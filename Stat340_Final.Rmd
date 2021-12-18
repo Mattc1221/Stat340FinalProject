@@ -165,14 +165,37 @@ not_astros <- season_2017 %>%
   filter(team!="astros", AB != 0)
 ```
 
+```{r}
+zones <- read.csv('./data/zone_swings.csv')
+zones_clean <- zones %>%
+  unite('Name', first_name:last_name, remove = TRUE) %>%
+  mutate(Name = str_replace(Name, " ", "")) %>%
+  mutate(Name = str_replace(Name, "_", " ")) %>%
+  select(Name, out_zone_swing, in_zone_swing, year) %>%
+  arrange(Name)
 
+astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
+# astros_zones_2017
+# zones_clean
+z_2016 <- zones_clean %>%
+  filter(year == "2016")
+
+z_2017 <- zones_clean %>%
+  filter(year == "2017")
+```
 
 ```{r}
-# Loading Data pt 2
-# btw this sucked
-wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
-  mutate(split = gsub(" ", "", split, fixed = TRUE), team = gsub(" ", "", team, fixed = TRUE)) %>%
-  mutate(split = toupper(split))
+astros_z <- left_join(zones_clean, astros_2017, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
+
+not_astros_z <- left_join(zones_clean, not_astros, by = "Name") %>%
+  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
+  drop_na() %>%
+  unique()
+
+zone_data <- rbind(astros_z, not_astros_z)
 ```
 
 ## Preliminary Plots
@@ -404,72 +427,34 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 
 So far it seems that our data is too general for our statistical question. There are a myriad of different factors that play into how a team does in a season, differing game to game. We believe that to tackle this question we need to take a loot at more in-depth statistics than just player hits, batting average, etc. We have found a new dataset from "Baseball Savant" that offer's player data for the percent of pitches that are out of the strike zone that a player swings at and the percent of pitches that are in the strike zone that a player swings at.
 
-
-```{r}
-test = data.frame(
-  player= c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"),
-  IZP = c(.1, .2, .3, .4, .5, .6, .7, .8, .9, .8, .14, .35, .66, 
-          .2, .25, .35, .45, .55, .65, .75, .85, .95, .85, .145, .355, .56),
-  OZP = c(.15, .25, .35, .45, .55, .65, .76, .86, .96, .86, .146, .356, .65, 
-          .2, .28, .38, .48, .58, .68, .75, .85, .95, .85, .145, .355, .56),
-  year = c("2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017",
-           "2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016"),
-  team = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-           "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M")
-)
-
-
-IZP_diffs <- test %>%
+```{r echo=FALSE}
+p_incs <- zone_data %>%
+  group_by(team, Name) %>%
+  mutate(pinc_in = (out_zone_swing[2] - out_zone_swing[1])/out_zone_swing[2]) %>%
+  mutate(pinc_out = (in_zone_swing[2] - in_zone_swing[1])/in_zone_swing[2]) %>%
+  select(team, Name, pinc_in, pinc_out) %>%
+  group_by(team) %>%
   drop_na() %>%
-  group_by(player) %>%
-  mutate(change_IZP = (IZP[2] -IZP[1]), change_OZP = (OZP[2] -OZP[1])) %>%
-  select(player, team, change_IZP, change_OZP) %>%
+  mutate(avg_inc_in = mean(pinc_in), avg_inc_out = mean(pinc_out)) %>%
+  select(team, avg_inc_in, avg_inc_out) %>%
   unique() %>%
-  arrange(desc(change_IZP)) %>%
-  mutate(team=ifelse(team=="A", "astros", "not_astros"))
-IZP_diffs$order <- 1:length(IZP_diffs$change_IZP)
-IZP_diffs %>%
+  mutate(team = ifelse(team == "astros", "astros", "not astros"))
+
+df <- p_incs %>%
+  arrange(desc(avg_inc_in))
+df$order_in <- 1:length(df$team)
+
+df <- df %>% 
+  arrange(desc(avg_inc_out))
+df$order_out <- 1:length(df$team)
+
+df %>%
   ggplot() +
-  geom_col(aes(x=order, y =change_IZP, fill = team))
-  
-```
+  geom_col(aes(x = order_in, y=avg_inc_in, fill = team)) 
 
-```{r}
-zones <- read.csv('./data/zone_swings.csv')
-zones_clean <- zones %>%
-  unite('Name', first_name:last_name, remove = TRUE) %>%
-  mutate(Name = str_replace(Name, " ", "")) %>%
-  mutate(Name = str_replace(Name, "_", " ")) %>%
-  select(Name, out_zone_swing, in_zone_swing, year) %>%
-  arrange(Name)
-<<<<<<< HEAD
-
-astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
-# astros_zones_2017
-# zones_clean
-z_2016 <- zones_clean %>%
-  filter(year == "2016")
-
-z_2017 <- zones_clean %>%
-  filter(year == "2017")
-=======
->>>>>>> 4482194cc15745dde01c9f71d7f96d437bb7f524
-```
-
-```{r}
-astros_z <- left_join(zones_clean, astros_2017, by = "Name") %>%
-  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
-  drop_na() %>%
-  unique()
-
-not_astros_z <- left_join(zones_clean, not_astros, by = "Name") %>%
-  select(Name, out_zone_swing, in_zone_swing, year, team) %>%
-  drop_na() %>%
-  unique()
-
-zone_data <- rbind(astros_z, not_astros_z)
-zone_data
+df %>%
+  ggplot() +
+  geom_col(aes(x = order_out, y=avg_inc_out, fill=team))
 ```
 
 ## Discussion on Progress/Challenges
