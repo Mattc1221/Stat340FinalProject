@@ -173,15 +173,6 @@ zones_clean <- zones %>%
   mutate(Name = str_replace(Name, "_", " ")) %>%
   select(Name, out_zone_swing, in_zone_swing, year) %>%
   arrange(Name)
-
-astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
-# astros_zones_2017
-# zones_clean
-z_2016 <- zones_clean %>%
-  filter(year == "2016")
-
-z_2017 <- zones_clean %>%
-  filter(year == "2017")
 ```
 
 ```{r}
@@ -196,6 +187,34 @@ not_astros_z <- left_join(zones_clean, not_astros, by = "Name") %>%
   unique()
 
 zone_data <- rbind(astros_z, not_astros_z)
+```
+
+```{r}
+all_zones <- read.csv('./data/all_zones.csv')
+all_zones_clean <- all_zones %>%
+  unite('Name', first_name:last_name, remove = TRUE) %>%
+  mutate(Name = str_replace(Name, " ", "")) %>%
+  mutate(Name = str_replace(Name, "_", " ")) %>%
+  select(-player_id)
+
+astros_names <- astros_2017 %>%
+  select(Name, team)
+
+not_astros_names <- not_astros %>%
+  select(Name, team)
+
+astros_all_z <- left_join(all_zones_clean, astros_names, by = "Name") %>%
+  select(Name, year, z_swing_percent, z_swing_miss_percent, oz_swing_percent, oz_swing_miss_percent, oz_contact_percent, out_zone_swing_miss , out_zone_swing, out_zone_percent, out_zone, iz_contact_percent, in_zone_swing_miss, in_zone_swing, in_zone_percent, in_zone, team) %>%
+  drop_na() %>%
+  unique()
+
+not_astros_all_z <- full_join(all_zones_clean, not_astros_names, by = "Name") %>%
+  select(Name, year, z_swing_percent, z_swing_miss_percent, oz_swing_percent, oz_swing_miss_percent, oz_contact_percent, out_zone_swing_miss , out_zone_swing, out_zone_percent, out_zone, iz_contact_percent, in_zone_swing_miss, in_zone_swing, in_zone_percent, in_zone, team) %>%
+  drop_na() %>%
+  unique()
+
+all_zone_data <- rbind(astros_all_z, not_astros_all_z)
+all_zone_data
 ```
 
 ## Preliminary Plots
@@ -342,12 +361,12 @@ Above we see that the batting average of the Astros is significantly better at h
 
 ```{r echo=FALSE}
 #head(not_astros)
-c = not_astros %>%
+not_astros_home = not_astros %>%
   filter(split == "HOME")
 #better than other teams when they are at home at significant stats
-t.test(astros_home$BA,c$BA) 
-# t.test(astros_home$HR,c$HR)
-# t.test(astros_home$RBI,c$RBI)
+t.test(astros_home$BA,not_astros_home$BA) 
+# t.test(astros_home$HR,not_astros_home$HR)
+# t.test(astros_home$RBI,not_astros_home$RBI)
 
 #HR is significantly better
 ```
@@ -355,11 +374,11 @@ t.test(astros_home$BA,c$BA)
 Here the results do not lead us anywhere conclusive as our p-value is too high to reject the hypothesis that the true mean of the distribution of the Astros batting average is the same as the true mean of the batting average of all other teams. We have also tried this in other variables in our data set as well, however the results have all been similar. There is no distinction between the astros home statistics versus other teams home statistics.
 
 ```{r echo=FALSE, include=FALSE}
-d = not_astros %>%
+not_astros_away = not_astros %>%
   filter(split == "AWAY")
-t.test(astros_away$BA,d$BA) 
-t.test(astros_away$HR,d$HR)
-t.test(astros_away$RBI,d$RBI)
+t.test(astros_away$BA,not_astros_away$BA) 
+t.test(astros_away$HR,not_astros_away$HR)
+t.test(astros_away$RBI,not_astros_away$RBI)
 #still perform better but not as strong as the home stats
 ```
 
@@ -471,9 +490,7 @@ df %>%
 
 + In doing this, we found out how hard it is to try and piece together all the datasets. This method also increases the margin of error, which is something we can compute and analyze for the final report. 
 
-+ After discussing our project in office hours and realizing regression would not really prove anything, we decided to just keep going down the same path of comparing home and away splits. This led us to multiple t-tests 
-**(fill in what VU did)**
-and continued along with our analysis. The challenge with this was that no matter how we computed home and away splits (we tried many different ways), there was nothing really jumping out at us. We attempted bootstrap but the results again were no good.
++ After discussing our project in office hours and realizing regression would not really prove anything, we decided to just keep going down the same path of comparing home and away splits. This led us to multiple 2 samples t-tests between the 3 significant stats (RBI,HR,and BA) when the astros is at home versus when they are away, and when the astros is at home versus when the others is at home to see if there are any notable or substantial differences. Our assumption is that if the differences between the astros stats at home and when they are away is substantial, then they play better due to home court advantage. But if the difference is notable, there might be more going on and we are in the right track. To "level" the playing field and strenthen our analysis that the astros was not just too "good" that season, we also did test for when the astros is at home versus when other teams (as a whole) is at home to see if the differences could help us conculde or strengthen our assumption. The challenge with this was that no matter how we computed home and away splits (we tried many different ways), there was nothing really jumping out at us. We attempted bootstrap but the results again were no good.
 
 + This led to see that our data just wasn't specific enough. We couldn't find any real evidence that the Astros had a advantage at home do to cheating. If we want to see if the actual act of sign stealing had an impact on the success of the Astros at home, and not just do to home field advantage, we had to find more specific data. Although we were told we shouldn't be gathering any more data, we thought if we wanted be able to answer our statistical questions in any way, we would need to gather more data on in (strike) swing percentage and out of (strike) zone percentage. This way, we can actually see if the batter having the knowledge to what pitch he was gonna be thrown actually impacted his hits at home in comparison to away.
 
