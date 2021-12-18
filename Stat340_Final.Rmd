@@ -299,59 +299,55 @@ However, because Away game Runs are lower than Home game Runs, this implies that
 
 Since our original statistical question is basically "can we prove that the Astros cheated in the 2017 season?" we want to determine if the results we found in the confidence interval above just prove that a home field advantage exists or if the Astros have a better home field advantage due to the existence of cheating.
 
-To do this we will perform some two sample t tests to determine a difference between the average statistics between Astros at home and other teams at their home stadium. To start, let us first test a few more variables specifically for Astros home vs. away.
+To do this we will perform some two sample t tests to determine a difference between the average statistics between Astros at home and other teams at their home stadium. We have realized that sign stealing should have a higher effect on players batting averages because it allowed the astros players to have an know which kind of pitch was comming in and thus have a better chance at hitting the ball. Batting Average is calculated as $BA = Hits / At Bats$.
 
 ```{r echo=FALSE}
-a = astros_2017 %>%
+astros_home = astros_2017 %>%
   filter(split == "HOME")
-b = astros_2017 %>%
+astros_away = astros_2017 %>%
   filter(split == "AWAY")
 
 ```
 ```{r echo=FALSE}
 # 2 sample t,tests on 3 major stats in mlb of astros home vs astros away
-t.test(a$BA,b$BA) 
-t.test(a$HR,b$HR)
-t.test(a$RBI,b$RBI)
+t.test(astros_home$BA,astros_away$BA) 
+# t.test(astros_home$HR,astros_away$HR)
+# t.test(astros_home$RBI,astros_away$RBI)
 ```
 
-Above we see that the Astros perform much better at home than away in the three variables we chose: Batting Average, Home Runs, and Runs Batted In. This again does not show conclusive evidence that they cheated, but instead adds strength to our earlier analysis that the Astros definitely have a home field advantage. Next we will compare the Astros with the rest of the league, by performing another two sample t test between the astros home games and the home games of all other teams in the league.
+Above we see that the batting average of the Astros is significantly better at home than away. This again does not show conclusive evidence that they cheated, but instead adds strength to our earlier analysis that the Astros definitely have some sort of a home field advantage. Next we will compare the Astros with the rest of the league, by performing another two sample t test between the astros home games and the home games of all other teams in the league.
 
 ```{r echo=FALSE}
 #head(not_astros)
 c = not_astros %>%
   filter(split == "HOME")
 #better than other teams when they are at home at significant stats
-t.test(a$BA,c$BA) 
-t.test(a$HR,c$HR)
-t.test(a$RBI,c$RBI)
+t.test(astros_home$BA,c$BA) 
+# t.test(astros_home$HR,c$HR)
+# t.test(astros_home$RBI,c$RBI)
 
 #HR is significantly better
 ```
-```{r echo=FALSE}
+
+Here the results do not lead us anywhere conclusive as our p-value is too high to reject the hypothesis that the true mean of the distribution of the Astros batting average is the same as the true mean of the batting average of all other teams.
+
+```{r echo=FALSE, include=FALSE}
 d = not_astros %>%
   filter(split == "AWAY")
-t.test(b$BA,d$BA) 
-t.test(b$HR,d$HR)
-t.test(b$RBI,d$RBI)
+t.test(astros_away$BA,d$BA) 
+t.test(astros_away$HR,d$HR)
+t.test(astros_away$RBI,d$RBI)
 #still perform better but not as strong as the home stats
 ```
 
-```{r echo=FALSE}
-t.test(a$sOPS.,b$sOPS.)
+```{r echo=FALSE, include=FALSE}
+t.test(astros_home$sOPS.,astros_away$sOPS.)
 #t.test(a$tOPS.,b$tOPS.)
-t.test(a$sOPS.,c$sOPS.)
 
 #significant better when astros is at home than when astros is away and other teams are at home (should look more at p val maybe ?)
 ```
 
-```{r}
-# Loading Data pt 2
-# btw this sucked
-wins_and_losses_2017 <- read.csv("./data/win_loss_2017.csv") %>%
-  mutate(split = gsub(" ", "", split, fixed = TRUE), team = gsub(" ", "", team, fixed = TRUE)) %>%
-  mutate(split = toupper(split))
-```
+
 
 
 ```{r include = FALSE}
