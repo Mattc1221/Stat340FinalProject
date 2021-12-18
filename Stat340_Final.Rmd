@@ -430,7 +430,7 @@ So far it seems that our data is too general for our statistical question. There
 ```{r echo=FALSE}
 p_incs <- zone_data %>%
   group_by(team, Name) %>%
-  arrange(desc(year)) %>%
+  arrange(Name, desc(year)) %>%
   mutate(pinc_in = (out_zone_swing[2] - out_zone_swing[1])/out_zone_swing[2]) %>%
   mutate(pinc_out = (in_zone_swing[2] - in_zone_swing[1])/in_zone_swing[2]) %>%
   select(team, Name, pinc_in, pinc_out) %>%
