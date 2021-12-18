@@ -361,12 +361,12 @@ Above we see that the batting average of the Astros is significantly better at h
 
 ```{r echo=FALSE}
 #head(not_astros)
-c = not_astros %>%
+not_astros_home = not_astros %>%
   filter(split == "HOME")
 #better than other teams when they are at home at significant stats
-t.test(astros_home$BA,c$BA) 
-# t.test(astros_home$HR,c$HR)
-# t.test(astros_home$RBI,c$RBI)
+t.test(astros_home$BA,not_astros_home$BA) 
+# t.test(astros_home$HR,not_astros_home$HR)
+# t.test(astros_home$RBI,not_astros_home$RBI)
 
 #HR is significantly better
 ```
@@ -374,11 +374,11 @@ t.test(astros_home$BA,c$BA)
 Here the results do not lead us anywhere conclusive as our p-value is too high to reject the hypothesis that the true mean of the distribution of the Astros batting average is the same as the true mean of the batting average of all other teams. We have also tried this in other variables in our data set as well, however the results have all been similar. There is no distinction between the astros home statistics versus other teams home statistics.
 
 ```{r echo=FALSE, include=FALSE}
-d = not_astros %>%
+not_astros_away = not_astros %>%
   filter(split == "AWAY")
-t.test(astros_away$BA,d$BA) 
-t.test(astros_away$HR,d$HR)
-t.test(astros_away$RBI,d$RBI)
+t.test(astros_away$BA,not_astros_away$BA) 
+t.test(astros_away$HR,not_astros_away$HR)
+t.test(astros_away$RBI,not_astros_away$RBI)
 #still perform better but not as strong as the home stats
 ```
 
