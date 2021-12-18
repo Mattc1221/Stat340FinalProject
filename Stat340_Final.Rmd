@@ -434,6 +434,7 @@ IZP_diffs %>%
   geom_col(aes(x=order, y =change_IZP, fill = team))
   
 ```
+
 ```{r}
 zones <- read.csv('./data/zone_swings.csv')
 zones_clean <- zones %>%
