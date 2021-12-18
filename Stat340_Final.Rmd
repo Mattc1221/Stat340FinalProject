@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ***
@@ -443,8 +443,8 @@ zones_clean <- zones %>%
   arrange(Name)
 
 astros_zones_2017 <- merge(astros_2017, zones_clean, by = "Name", all = TRUE)
-astros_zones_2017
-zones_clean
+# astros_zones_2017
+# zones_clean
 ```
 
 ## Discussion on Progress/Challenges
@@ -460,6 +460,13 @@ zones_clean
 
 + In doing this, we found out how hard it is to try and piece together all the datasets. This method also increases the margin of error, which is something we can compute and analyze for the final report. 
 
++ After discussing our project in office hours and realizing regression would not really prove anything, we decided to just keep going down the same path of comparing home and away splits. This led us to multiple t-tests 
+**(fill in what VU did)**
+and continued along with our analysis. The challenge with this was that no matter how we computed home and away splits (we tried many different ways), there was nothing really jumping out at us. We attempted bootstrap but the results again were no good.
+
++ This led to see that our data just wasn't specific enough. We couldn't find any real evidence that the Astros had a advantage at home do to cheating. If we want to see if the actual act of sign stealing had an impact on the success of the Astros at home, and not just do to home field advantage, we had to find more specific data. Although we were told we shouldn't be gathering any more data, we thought if we wanted be able to answer our statistical questions in any way, we would need to gather more data on in (strike) swing percentage and out of (strike) zone percentage. This way, we can actually see if the batter having the knowledge to what pitch he was gonna be thrown actually impacted his hits at home in comparison to away.
+
++ If we had more time, we would spend much more time searching for a data set with in zone and out zone swing percentage for home and away. The only easily available data set to grab without too many cleaning issues combined home and away zone swing percentages, making it impossible for us to fully answer our question. We were able, however, to see a significant difference in the zones swing percentage from the previous year, (2016) to the cheating year, showing us that there is definitely more to be explored on this path.
 
 **Progress**:
 
