@@ -2,8 +2,8 @@
 title: "Stat 340 Group Progress Report"
 date: "11/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ***
@@ -33,6 +33,10 @@ library(cowplot)
 library(knitr)
 library(stringr)
 ```
+
+## Abstract
+After former Houston Astros pitcher, Mike Fiers, accused the Astros of cheating by setting up cameras in center field to steal signs, it became necessary to find evidence to determine if these claims were true. Our group tried to find statistical evidence to support Fiers’ claims. Because the Astros could only cheat at home, we tried to find any statistically significant difference between the Astros batting performance when at home and when on the road. We used box plots to compare some basic batting stats for the Astros when they are at home vs. away. We ran a monte carlo simulation to check if the observed difference between home and away runs indicated statistical significance.  We ran a t-test to determine if the statistical difference in runs scored came from the advantage provided from the Astros home park. We found that the Astros team batting average was significantly better at home than away. We ran another t-test to compare the Astros to the rest of the league. We found that there is no distinction between the Astros home statistics and the other teams’ home statistics. We then used an additional dataset that gave us Outside swing% and Inside Swing% which allowed us to determine if the players knew what pitch was coming, would they swing or not swing. We found percentage changes In-Zone% and Out-Zone%. Both the in-zone% increase and the out-zone% decrease, so that adds some evidence to the Astros improvement in 2017 (perhaps caused by cheating).
+
 
 ## Description of Data
 
@@ -500,7 +504,7 @@ These two graphs so the change in Out-zone percent and In-zone percent between 2
 
 + After discussing our project in office hours and realizing regression would not really prove anything, we decided to just keep going down the same path of comparing home and away splits. This led us to multiple 2 samples t-tests between the 3 significant stats (RBI,HR,and BA) when the astros is at home versus when they are away, and when the astros is at home versus when the others is at home to see if there are any notable or substantial differences. Our assumption is that if the differences between the astros stats at home and when they are away is substantial, then they play better due to home court advantage. But if the difference is notable, there might be more going on and we are in the right track. To "level" the playing field and strenthen our analysis that the astros was not just too "good" that season, we also did test for when the astros is at home versus when other teams (as a whole) is at home to see if the differences could help us conculde or strengthen our assumption. The challenge with this was that no matter how we computed home and away splits (we tried many different ways), there was nothing really jumping out at us. We attempted bootstrap but the results again were no good.
 
-+ This led to see that our data just wasn't specific enough. We couldn't find any real evidence that the Astros had a advantage at home do to cheating. If we want to see if the actual act of sign stealing had an impact on the success of the Astros at home, and not just do to home field advantage, we had to find more specific data. Although we were told we shouldn't be gathering any more data, we thought if we wanted be able to answer our statistical questions in any way, we would need to gather more data on in (strike) swing percentage and out of (strike) zone percentage. This way, we can actually see if the batter having the knowledge to what pitch he was gonna be thrown actually impacted his hits at home in comparison to away.
++ This led to see that our data just wasn't specific enough. We couldn't find any real evidence that the Astros had a advantage at home do to cheating. If we want to see if the actual act of sign stealing had an impact on the success of the Astros at home, and not just do to home field advantage, we had to find more specific data. Although we were told we shouldn't be gathering any more data, we thought if we wanted be able to answer our statistical questions in any way, we would need to gather more data on in (strike) zone swing percentage and out of (strike) zone percentage. This way, we can actually see if the batter having the knowledge to what pitch he was gonna be thrown actually impacted his hits at home in comparison to away.
 
 + If we had more time, we would spend much more time searching for a data set with in zone and out zone swing percentage for home and away. The only easily available data set to grab without too many cleaning issues combined home and away zone swing percentages, making it impossible for us to fully answer our question. We were able, however, to see a significant difference in the zones swing percentage from the previous year, (2016) to the cheating year, showing us that there is definitely more to be explored on this path.
 
@@ -515,6 +519,8 @@ These two graphs so the change in Out-zone percent and In-zone percent between 2
 
 ## Conclusion
 
+We have a tried a lot of different things, however most of them do not lead us anywhere significant in trying to answer if the 2017 Houston Astros cheated or not. We have shown that the Astros do have a home field advantage, however the sort of home field advantage that they have does not seem out of the ordinary when compared to other teams. We have also seen that their batting seems to have improved between the 2016 and 2017 season, but they again do not seem to have improved drastically in comparison to the other teams. Overall, there are hundreds of variables that play into how a team does in a season. Perhaps, the Houston Astros truly improved and should've won during the 2017 season even without cheating, or maybe their cheating helped boost their confidence. But the data that we would need to prove this is hard to obtain and is most likely only able to be obtained by the major league teams statistician. Although we weren't able to come to a conclusive result, we were able to see there is some aspect that goes into having a home field advantage, but its very hard to single out just one variable.
 
+Some potential questions that we would want to further look into is what statistical advantage did the Astros actually gained from stealing the signs of the other teams throughout the season. Instead of looking at overall games, we could at specific aspects of the game that was improved upon by each player in the home games.
 
 
