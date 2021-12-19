@@ -214,7 +214,6 @@ not_astros_all_z <- full_join(all_zones_clean, not_astros_names, by = "Name") %>
   unique()
 
 all_zone_data <- rbind(astros_all_z, not_astros_all_z)
-all_zone_data
 ```
 
 ## Preliminary Plots
@@ -326,7 +325,7 @@ data.frame(diff = runs_sim)%>%
     values = c("Confidence Interval" = "#34c4cc", "Observed Difference" = "#ec8274")) +
   xlab("Difference of Averages") +
   ylab("Frequency") +
-  ggtitle("Difference of Average Player Runs", subtitle = "Home vs. Away - Astros 2017")
+  ggtitle("Difference of Average Player Runs", subtitle = "(Away-Home) - Astros 2017")
 ```
 
 ***
@@ -447,11 +446,11 @@ as.vector(quantile(not_astros_ba$diff_ba, probs=c(0.025, 0.975)))
 So far it seems that our data is too general for our statistical question. There are a myriad of different factors that play into how a team does in a season, differing game to game. We believe that to tackle this question we need to take a loot at more in-depth statistics than just player hits, batting average, etc. We have found a new dataset from "Baseball Savant" that offer's player data for the percent of pitches that are out of the strike zone that a player swings at and the percent of pitches that are in the strike zone that a player swings at.
 
 ```{r echo=FALSE}
-p_incs <- zone_data %>%
+p_incs <- all_zone_data %>%
   group_by(team, Name) %>%
   arrange(Name, desc(year)) %>%
-  mutate(pinc_in = (out_zone_swing[2] - out_zone_swing[1])/out_zone_swing[2]) %>%
-  mutate(pinc_out = (in_zone_swing[2] - in_zone_swing[1])/in_zone_swing[2]) %>%
+  mutate(pinc_in = (out_zone_percent[1] - out_zone_percent[2])) %>%
+  mutate(pinc_out = (in_zone_percent[1] - in_zone_percent[2])) %>%
   select(team, Name, pinc_in, pinc_out) %>%
   group_by(team) %>%
   drop_na() %>%
@@ -470,12 +469,21 @@ df$order_out <- 1:length(df$team)
 
 df %>%
   ggplot() +
-  geom_col(aes(x = order_in, y=avg_inc_in, fill = team)) 
+  geom_col(aes(x = order_in, y=avg_inc_in, fill = team)) +
+  xlab("Team") +
+  ylab("Change in Percent") +
+  ggtitle("Change in Inzone Percent Between 2016 and 2017")
 
 df %>%
   ggplot() +
-  geom_col(aes(x = order_out, y=avg_inc_out, fill=team))
+  geom_col(aes(x = order_out, y=avg_inc_out, fill=team))+
+  xlab("Team") +
+  ylab("Change in Percent") +
+  ggtitle("Change in Outzone Percent Between 2016 and 2017")
+
 ```
+
+These two graphs so the change in Out zone percent and In zone percent between 2016 and 2017 for each team. We highlighted the astros in red to distinguish them from the rest of the teams. A positive increase in In zone percentage means that a team is swinging at more pitches that are thrown in the strike zone. A positive increase in Out zone percentage means that a team is swinging at more pitches that are thrown outside the strike zone than the year previous. For a team to have improved from the year before the will want to increase their in zone percent and decrease their outzone percent. Here we can see that the Astros have done this, however it doesn't look like they have improved a significant amount compared to other teams as their change for both and outzone is within 1 percent.
 
 ## Discussion on Progress/Challenges
 
@@ -505,14 +513,7 @@ df %>%
 + In experimenting with different ways to analyze home and away splits, we found that creating our own batting average would be best because we could create one for each home and away game according to the player. In doing this we also realized that teams rosters are different for home and away and this, along with players who never got up the the plate once in a whole season were skewing our results. In an attempt to resolve this, we only analyzed players who got up to bat once per game, or 162 times for all the regular season games in the pre-covid 2017 season.
 
 
-## Next Steps
-
-+ We want to figure out why the new regression models we created were so bad. Before the final project is due, we will work on how to improve our model, and attend office hours to gain some insight as why they currently are the way they are. We can then plot the models to visually see how they are doing 
-
-
-+ We also might want to look into the performance of teams throughout the league at the Astros' home stadium to see if the conditions under which teams play at that location (called park factors) have any affect on performance, indicating a possible reason for the Astros lower performance at home.
-
-+ We are also considering looking into things such as individual Astros players performance and test to see if there were any noticeable, improbable differences between years, comparing it to the change in performance for other teams' top performers. 
+## Future Steps
 
 
 

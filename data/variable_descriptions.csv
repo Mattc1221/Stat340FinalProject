@@ -7,3 +7,5 @@ Hits,H,When a batter reaches base without doing so via error or fielder’s choi
 Homeruns,HR,Scored when the ball is hit in such a way that the batter is able to circle the bases and reach home safely.
 Walks,W,"Occurs when a pitcher throws four pitches outside of the strike zone, none of which are swung at by the batter."
 Batting Average,BA,Percentage of At Bats a player gets a hit.
+In Zone Percent, IZP,The percent of pitches thrown in the strike zone that a player swings at.
+Out Zone Percent, OZP,The percent of pitches thrown outside the strike zone that a player swings at.
