@@ -472,18 +472,18 @@ df %>%
   geom_col(aes(x = order_in, y=avg_inc_in, fill = team)) +
   xlab("Team") +
   ylab("Change in Percent") +
-  ggtitle("Change in Inzone Percent Between 2016 and 2017")
+  ggtitle("Change in In-zone Percent Between 2016 and 2017")
 
 df %>%
   ggplot() +
   geom_col(aes(x = order_out, y=avg_inc_out, fill=team))+
   xlab("Team") +
   ylab("Change in Percent") +
-  ggtitle("Change in Outzone Percent Between 2016 and 2017")
+  ggtitle("Change in Out-zone Percent Between 2016 and 2017")
 
 ```
 
-These two graphs so the change in Out zone percent and In zone percent between 2016 and 2017 for each team. We highlighted the astros in red to distinguish them from the rest of the teams. A positive increase in In zone percentage means that a team is swinging at more pitches that are thrown in the strike zone. A positive increase in Out zone percentage means that a team is swinging at more pitches that are thrown outside the strike zone than the year previous. For a team to have improved from the year before the will want to increase their in zone percent and decrease their outzone percent. Here we can see that the Astros have done this, however it doesn't look like they have improved a significant amount compared to other teams as their change for both and outzone is within 1 percent.
+These two graphs so the change in Out-zone percent and In-zone percent between 2016 and 2017 for each team. We highlighted the Astros in red to distinguish them from the rest of the teams. A positive increase in In-zone percentage means that a team is swinging at more pitches that are thrown in the strike zone. A positive increase in Out-zone percentage means that a team is swinging at more pitches that are thrown outside the strike zone than the year previous. For a team to have improved from the year before the will want to increase their in-zone percent and decrease their out-zone percent. Here we can see that the Astros have done this, however it doesn't look like they have improved a significant amount compared to other teams as their change for both in-zone and out-zone is within 1 percent.
 
 ## Discussion on Progress/Challenges
 
@@ -513,7 +513,7 @@ These two graphs so the change in Out zone percent and In zone percent between 2
 + In experimenting with different ways to analyze home and away splits, we found that creating our own batting average would be best because we could create one for each home and away game according to the player. In doing this we also realized that teams rosters are different for home and away and this, along with players who never got up the the plate once in a whole season were skewing our results. In an attempt to resolve this, we only analyzed players who got up to bat once per game, or 162 times for all the regular season games in the pre-covid 2017 season.
 
 
-## Future Steps
+## Conclusion
 
 
 
